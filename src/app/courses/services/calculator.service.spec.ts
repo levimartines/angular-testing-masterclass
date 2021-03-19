@@ -1,5 +1,6 @@
 import { CalculatorService } from './calculator.service';
 import { LoggerService } from './logger.service';
+import {TestBed} from '@angular/core/testing';
 
 describe('CalculatorService', () => {
 
@@ -7,13 +8,17 @@ describe('CalculatorService', () => {
   let logger: any;
 
   beforeEach(() => {
-    // createSpyObj -> Cria um objeto fake com os métodos passados como argument
-    // que já está sendo espionado pelo jasmine.
     logger = jasmine.createSpyObj('LoggerService', ['log']);
-
     // caso o método retorne algum valor, pode ser útilizado o método do jasmine .and.returnValue()
     // logger.log().and.returnValue(2);
-    service = new CalculatorService(logger);
+
+    TestBed.configureTestingModule({
+      providers: [
+        CalculatorService,
+        {provide: LoggerService, useValue: logger}
+      ]
+    });
+    service = TestBed.inject(CalculatorService);
   });
 
   it('should sum two numbers', () => {
