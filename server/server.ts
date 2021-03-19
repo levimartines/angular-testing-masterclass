@@ -1,5 +1,3 @@
-
-
 import * as express from 'express';
 import {Application} from 'express';
 import {getAllCourses, getCourseById} from './get-courses.route';
@@ -23,7 +21,7 @@ app.route('/api/courses/:id').put(saveCourse);
 
 
 const httpServer: any = app.listen(9000, () => {
-    console.log('HTTP REST API Server running at http://localhost:' + httpServer.address().port);
+  console.log('HTTP REST API Server running at http://localhost:' + httpServer.address().port);
 });
 
 
