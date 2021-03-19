@@ -3,6 +3,7 @@ import {TestBed} from '@angular/core/testing';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {COURSES} from '../../../../server/db-data';
 import {Course} from '../model/course';
+import {HttpErrorResponse} from '@angular/common/http';
 
 describe('CoursesService', () => {
   let service: CoursesService;
@@ -41,5 +42,39 @@ describe('CoursesService', () => {
     req.flush(COURSES[12]);
   });
 
-  afterEach(() =>     httpTestingController.verify());
+  it('should save the course data', () => {
+    const changes: Partial<Course> = {
+      titles: {
+        description: 'Teste Course Topzera'
+      }
+    };
+    service.saveCourse(12, changes).subscribe(course => {
+      expect(course.id).toBe(12);
+    });
+    const req = httpTestingController.expectOne('/api/courses/12');
+    expect(req.request.method).toEqual('PUT');
+    expect(req.request.body.titles.description).toEqual(changes.titles.description);
+    req.flush({
+      ...COURSES[12],
+      ...changes
+    });
+  });
+
+  it('should throw an error if save course fails', () => {
+    const changes: Partial<Course> = {
+      titles: {
+        description: 'Teste Course Topzera'
+      }
+    };
+    service.saveCourse(12, changes).subscribe(
+      next => fail('this operation should fail'),
+      (error: HttpErrorResponse) => {
+        expect(error.status).toBe(500);
+      });
+    const req = httpTestingController.expectOne('/api/courses/12');
+    expect(req.request.method).toEqual('PUT');
+    req.flush(null, {status: 500, statusText: 'Internal Server Error'});
+  });
+
+  afterEach(() => httpTestingController.verify());
 });
