@@ -22,8 +22,6 @@ describe('CalculatorService', () => {
   });
 
   it('should sum two numbers', () => {
-
-
     const result = service.add(2, 2);
     expect(result).toBe(4);
     expect(logger.log).toHaveBeenCalledTimes(1);
