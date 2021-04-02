@@ -1,4 +1,6 @@
-import { fakeAsync, tick } from '@angular/core/testing';
+import {fakeAsync, flushMicrotasks, tick} from '@angular/core/testing';
+import {of} from "rxjs";
+import {delay} from "rxjs/operators";
 
 fdescribe('Async Testing Examples', () => {
 
@@ -27,5 +29,31 @@ fdescribe('Async Testing Examples', () => {
     // flush() completa todas as subscriptions pendentes na fila do fakeAsyncZone
 
     expect(test).toBeTruthy();
+  }));
+
+  it('Async test example - Promise + setTimeout', fakeAsync(() => {
+    let counter = 0;
+    Promise.resolve().then(() => {
+      counter += 10;
+      setTimeout(() => counter += 1, 1000);
+    });
+    console.log('Running test assertions');
+
+    expect(counter).toBe(0);
+    flushMicrotasks();
+    expect(counter).toBe(10);
+    tick(1000);
+    expect(counter).toBe(11);
+  }));
+
+  it('Async test exampel - Observables', fakeAsync(() => {
+    let test = false;
+    console.log('Creating Observable');
+    const test$ = of(test).pipe(delay(500));
+    test$.subscribe(() => test = true);
+
+    console.log('Running test assertions');
+    tick(500);
+    expect(test).toBe(true);
   }));
 });
