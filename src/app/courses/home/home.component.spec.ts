@@ -68,8 +68,8 @@ describe('HomeComponent', () => {
     expect(tabs.length).toBe(2);
   });
 
-
-  it('should display advanced courses when tab clicked', fakeAsync(() => {
+  // Poderia ser usado na configuração do módulo de teste, porém seria necessário chamar o flush()
+  it('should display advanced courses when tab clicked using fakeAsync()', fakeAsync(() => {
     service.findAllCourses.and.returnValue(of(setupCourses()));
     fixture.detectChanges();
     const tabs = el.queryAll(By.css('.mat-tab-label'));
@@ -80,6 +80,26 @@ describe('HomeComponent', () => {
     const cardTitles = el.queryAll(By.css('.mat-tab-body-active .mat-card-title'));
     expect(cardTitles.length).toBeGreaterThan(0);
     expect(cardTitles[0].nativeElement.textContent).toContain('Angular Security Course');
+  }));
+
+
+  // waitForAsync - alternativa para o fakeAsync, porém com menos controle ( flush, tick, etc),
+  // porém que permite req Http.
+  xit('should display advanced courses when tab clicked using waitForAsync()', waitForAsync(() => {
+    service.findAllCourses.and.returnValue(of(setupCourses()));
+    fixture.detectChanges();
+    const tabs = el.queryAll(By.css('.mat-tab-label'));
+    click(tabs[1]);
+    fixture.detectChanges();
+
+    // Retorna uma Promise que só é executada quando todas as operações assíncronas são encerradas
+    fixture.whenStable().then(() => {
+      console.log("whenStable called")
+      const cardTitles = el.queryAll(By.css('.mat-tab-body-active .mat-card-title'));
+      expect(cardTitles.length).toBeGreaterThan(0);
+      expect(cardTitles[0].nativeElement.textContent).toContain('Angular Security Course');
+    });
+
   }));
 
 });
