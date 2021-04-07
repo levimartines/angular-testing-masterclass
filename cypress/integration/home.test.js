@@ -10,11 +10,11 @@ describe('Home Page', () => {
     // Cria o mock da resposta para x rota do servidor
     cy.route('/api/courses', '@coursesJSON').as('courses');
 
-    // Aguarda a resposta do servidor
-    cy.wait('@courses');
-
     // Acessa o endereço
     cy.visit('/');
+
+    // Aguarda a resposta do servidor
+    cy.wait('@courses');
   });
 
   it('Should display a list of courses', () => {
